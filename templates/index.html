@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RakanGPT - AI Writing Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>✍️ RakanGPT</h1>
+                <p>AI-Powered Writing Assistant</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-btn active" data-tab="chat">💬 Chat</button>
+            <button class="nav-btn" data-tab="essay">📚 Essay</button>
+            <button class="nav-btn" data-tab="email">✉️ Email</button>
+            <button class="nav-btn" data-tab="improve">✨ Improve</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Chat Tab -->
+            <section id="chat-tab" class="tab-content active">
+                <div class="form-container">
+                    <h2>💬 Chat with AI</h2>
+                    <p style="color: #666; margin-bottom: 20px;">Ask anything - get instant AI responses</p>
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="chat-message ai">
+                            <div class="chat-text">👋 Hi! I'm RakanGPT, your AI English writing assistant. I'm here to help you with essays, emails, writing improvements, and free-form conversation. What can I help you with today?</div>
+                        </div>
+                    </div>
+                    <form id="chatForm" class="chat-input-form">
+                        <textarea id="chatInput" placeholder="Type your message..." required></textarea>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Essay Tab -->
+            <section id="essay-tab" class="tab-content active">
+                <div class="form-container">
+                    <h2>Generate Academic Essay</h2>
+                    <form id="essayForm">
+                        <div class="form-group">
+                            <label for="essayTopic">Essay Topic *</label>
+                            <textarea id="essayTopic" placeholder="Enter your essay topic..." required></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="essayStyle">Writing Style</label>
+                                <select id="essayStyle">
+                                    <option value="formal">Formal</option>
+                                    <option value="casual">Casual</option>
+                                    <option value="creative">Creative</option>
+                                    <option value="business">Business</option>
+                                    <option value="persuasive">Persuasive</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="essayLength">Length</label>
+                                <select id="essayLength">
+                                    <option value="short">Short (300-500 words)</option>
+                                    <option value="medium" selected>Medium (600-900 words)</option>
+                                    <option value="long">Long (1200-1500 words)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="essayGrammar" checked>
+                            <label for="essayGrammar">Check grammar</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Generate Essay</button>
+                    </form>
+                </div>
+
+                <div id="essayResult" class="result-container hidden">
+                    <h3>Generated Essay</h3>
+                    <div id="essayOutput" class="output-text"></div>
+                    <div id="essayStats" class="stats"></div>
+                    <div id="essayIssues" class="issues hidden"></div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('essayOutput')">📋 Copy</button>
+                        <button class="btn btn-secondary" onclick="downloadText('essayOutput', 'essay')">⬇️ Download</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Email Tab -->
+            <section id="email-tab" class="tab-content">
+                <div class="form-container">
+                    <h2>Generate Professional Email</h2>
+                    <form id="emailForm">
+                        <div class="form-group">
+                            <label for="emailRecipient">Recipient Name</label>
+                            <input type="text" id="emailRecipient" placeholder="e.g., Project Manager" value="Team">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailPurpose">Email Purpose *</label>
+                            <input type="text" id="emailPurpose" placeholder="e.g., Meeting Request" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailTone">Tone</label>
+                            <select id="emailTone">
+                                <option value="business" selected>Professional</option>
+                                <option value="formal">Formal</option>
+                                <option value="casual">Casual</option>
+                                <option value="creative">Creative</option>
+                                <option value="persuasive">Persuasive</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="emailPoints">Key Points (one per line)</label>
+                            <textarea id="emailPoints" placeholder="Add key points to include in the email..."></textarea>
+                        </div>
+
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="emailGrammar" checked>
+                            <label for="emailGrammar">Check grammar</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Generate Email</button>
+                    </form>
+                </div>
+
+                <div id="emailResult" class="result-container hidden">
+                    <h3>Generated Email</h3>
+                    <div id="emailOutput" class="output-text"></div>
+                    <div id="emailIssues" class="issues hidden"></div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('emailOutput')">📋 Copy</button>
+                        <button class="btn btn-secondary" onclick="downloadText('emailOutput', 'email')">⬇️ Download</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Improve Tab -->
+            <section id="improve-tab" class="tab-content">
+                <div class="form-container">
+                    <h2>Improve Your Text</h2>
+                    <form id="improveForm">
+                        <div class="form-group">
+                            <label for="improveText">Your Text *</label>
+                            <textarea id="improveText" placeholder="Paste your text here..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="improveType">Improvement Type</label>
+                            <select id="improveType">
+                                <option value="clarity" selected>Clarity</option>
+                                <option value="grammar">Grammar</option>
+                                <option value="style">Style</option>
+                                <option value="conciseness">Conciseness</option>
+                                <option value="formal">Formality</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Improve Text</button>
+                    </form>
+                </div>
+
+                <div id="improveResult" class="result-container hidden">
+                    <h3>Comparison</h3>
+                    <div class="comparison">
+                        <div class="comparison-side">
+                            <h4>Original</h4>
+                            <div id="improveOriginal" class="output-text"></div>
+                        </div>
+                        <div class="comparison-side">
+                            <h4>Improved</h4>
+                            <div id="improveImproved" class="output-text"></div>
+                        </div>
+                    </div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('improveImproved')">📋 Copy Improved</button>
+                        <button class="btn btn-secondary" onclick="downloadText('improveImproved', 'improved-text')">⬇️ Download</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grammar Tab -->
+            <section id="grammar-tab" class="tab-content">
+                <div class="form-container">
+                    <h2>Check Grammar & Spelling</h2>
+                    <form id="grammarForm">
+                        <div class="form-group">
+                            <label for="grammarText">Your Text *</label>
+                            <textarea id="grammarText" placeholder="Paste your text here..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Check Grammar</button>
+                    </form>
+                </div>
+
+                <div id="grammarResult" class="result-container hidden">
+                    <h3>Grammar Check Results</h3>
+                    <div id="grammarStats" class="stats"></div>
+                    <div id="grammarIssues" class="grammar-issues"></div>
+                    <div class="result-actions">
+                        <button class="btn btn-secondary" onclick="copyToClipboard('grammarText')">📋 Copy Text</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Generating your content...</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Powered by Claude AI • Made with ❤️ by RakanGPT</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
